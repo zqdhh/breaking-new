@@ -13,6 +13,29 @@ $(function () {
     // 1.3 创建裁剪区域
     $image.cropper(options);
 
+    getUserAvatar();
+    // 获取接口的用户信息 头像
+    function getUserAvatar() {
+        $.ajax({
+            method: 'GET',
+            url: '/my/userinfo',
+            success: function (res) {
+                if (res.status != 0) {
+                    return layui.layer.mag('获取用户信息失败');
+                }
+                // 如果用户有头像
+                if (res.data.user_pic) {
+                    // 3.重新初始化载剪区域
+                    $image
+                        .cropper('destroy') //销毁旧的裁剪区域
+                        .attr('src', res.data.user_pic) //重新设置图片路径
+                        .cropper(options)//重新初始化裁剪区域
+                }
+            },
+        });
+    }
+
+
     // 为上传按钮加点击事件
     $('#btnChooseImage').on('click', function () {
         $('#file').click();
@@ -29,6 +52,7 @@ $(function () {
         var file = e.target.files[0];
         // 2.将文件 转化为路径
         var ingURL = URL.createObjectURL(file);
+
         // 3.重新初始化载剪区域
         $image
             .cropper('destroy') //销毁旧的裁剪区域
@@ -53,7 +77,7 @@ $(function () {
             method: 'POST',
             url: '/my/update/avatar',
             data: {
-                avatar:dataURL
+                avatar: dataURL
             },
             success: function (res) {
                 if (res.status != 0) {

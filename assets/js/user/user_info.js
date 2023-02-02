@@ -7,6 +7,21 @@ $(function () {
             if (value.length > 6) {
                 return '昵称长度必须在 1 ~ 6字符之间'
             }
+            if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)) {
+                return '用户名不能有特殊字符';
+            }
+            if (/(^\_)|(\__)|(\_+$)/.test(value)) {
+                return '用户名首尾不能出现下划线\'_\'';
+            }
+            if (/^\d+\d+\d$/.test(value)) {
+                return '用户名不能全为数字';
+            }
+
+            //如果不想自动弹出默认提示框，可以直接返回 true，这时你可以通过其他任意方式提示（v2.5.7 新增）
+            if (value === 'xxx') {
+                alert('用户名不能为敏感词');
+                return true;
+            }
         }
     });
 
@@ -33,10 +48,11 @@ $(function () {
     $('#btnReset').on('click', function (e) {
         // 阻止表单默认重置行为
         e.preventDefault();
+        // 重置成接口目前最新的数据
         initUserInfo();
     });
 
-    // 监听表单的提交事件
+    // // 监听表单的提交事件
     $('.layui-form').on('submit', function (e) {
         // 阻止表单的默认提交行为
         e.preventDefault();
